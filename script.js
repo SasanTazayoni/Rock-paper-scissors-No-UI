@@ -67,4 +67,4 @@ function game() {
     console.log('------------------')
 }
 
-game()
+setTimeout(function startGame() { game(); }, 5000);
