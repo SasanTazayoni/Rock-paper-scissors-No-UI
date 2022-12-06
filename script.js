@@ -1,4 +1,7 @@
 const choices = ['rock', 'paper', 'scissors'];
+const WIN = 'WIN';
+const LOSE = 'LOSE';
+const DRAW = 'DRAW';
 
 function computerPlay() {
     return choices[Math.floor(Math.random() * choices.length)];
@@ -7,37 +10,29 @@ function computerPlay() {
 function playRound(playerSelection, computerSelection) {
     const rules = {rock: "scissors", paper: "rock", scissors: "paper"};
 
-    if (playerSelection === computerSelection) return "Draw!";
+    if (playerSelection === computerSelection) return DRAW;
     if (computerSelection === rules[playerSelection]) {
-        return `You win! ${playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1)} beats ${computerSelection}!`
+        return WIN;
     } else {
-        return `You lose! ${computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1)} beats ${playerSelection}!`
+        return LOSE;
     }
 }
 
 
-function getPlayerInput(message){
-    let input = prompt(message);
-    if (input === null) {
-        if (confirm('Would you like to quit?')) {
-            alert('Game ended');
-            return console.log('Game ended prematurely');
-        } else {
-            return getPlayerInput(message);
-        }
-    }
-
+function getPlayerInput(message) {
     while (true) {
-        input = input.trim().toLowerCase();
-        if (!inputIsValid(input)) {
+        const input = prompt(message); 
+        if (!input) {
+            if (confirm('Would you like to quit?')) {
+                alert('Game ended');
+                return console.log('Game ended prematurely');
+            }
+        } else if (!inputIsValid(input.trim().toLowerCase())) {
             alert('Please enter a valid input');
-            input = prompt(message);
         } else {
-            break;
+            return input.trim().toLowerCase();
         }
     }
-
-    return input;
 }
 
 function inputIsValid(choice) {
@@ -58,22 +53,20 @@ function game() {
     let computerWins = 0;
     for (let i = 0; i < 5; i++) {
         const playerSelection = getPlayerInput('Rock, paper or scissors?');
-
         if (!playerSelection) return; // continue, break, return
-
         const computerSelection = computerPlay();
         console.log(playRound(playerSelection, computerSelection));
-        if (playRound(playerSelection, computerSelection) === "Draw!") {
+        if (playRound(playerSelection, computerSelection) === DRAW) {
             draws++;
             alert('Tied game...')
             console.log(`Wins: ${playerWins}, Losses: ${computerWins}, Draws: ${draws}`);
         }
-        if (playRound(playerSelection, computerSelection) === `You win! ${playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1)} beats ${computerSelection}!`) {
+        if (playRound(playerSelection, computerSelection) === WIN) {
             playerWins++
             alert(`You win! ${playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1)} beats ${computerSelection}!`);
             console.log(`Wins: ${playerWins}, Losses: ${computerWins}, Draws: ${draws}`);
         };
-        if (playRound(playerSelection, computerSelection) === `You lose! ${computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1)} beats ${playerSelection}!`) {
+        if (playRound(playerSelection, computerSelection) === LOSE) {
             computerWins++;
             alert(`You lose! ${computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1)} beats ${playerSelection}!`);
             console.log(`Wins: ${playerWins}, Losses: ${computerWins}, Draws: ${draws}`);
