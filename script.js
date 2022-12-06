@@ -1,6 +1,7 @@
+const choices = ['rock', 'paper', 'scissors'];
+
 function computerPlay() {
-    const randomSelect = ['rock', 'paper', 'scissors']
-    return randomSelect[Math.floor(Math.random() * randomSelect.length)];
+    return choices[Math.floor(Math.random() * choices.length)];
 }
 
 function playRound(playerSelection, computerSelection) {
@@ -14,22 +15,41 @@ function playRound(playerSelection, computerSelection) {
     }
 }
 
-function getPlayerInput(){
-    let validInput = false;
-    while(validInput === false) {
-        const choice = prompt('Rock, Paper or Scissors?');
-        if (!choice) location.reload();
-        const choiceInLower = choice.toLowerCase();
-        if (choiceInLower !== 'rock' && 
-            choiceInLower !== 'paper' &&
-            choiceInLower !== 'scissors') {
-                alert('Please enter a valid input');
-                continue;
+
+function getPlayerInput(message){
+    let input = prompt(message);
+    if (input === null) {
+        if (confirm('Would you like to quit?')) {
+            alert('Game ended');
+            return console.log('Game ended prematurely');
         } else {
-        validInput = true;
-        return choiceInLower;
+            return getPlayerInput(message);
         }
     }
+
+    while (true) {
+        input = input.trim().toLowerCase();
+        if (!inputIsValid(input)) {
+            alert('Please enter a valid input');
+            input = prompt(message);
+        } else {
+            break;
+        }
+    }
+
+    return input;
+}
+
+function inputIsValid(choice) {
+    return choices.includes(choice);
+}
+
+function firstGame() {
+    const startGame = confirm("Would you like to play a game of Rock, paper, scissors? (Best of 5)");
+    if (!startGame) {
+        console.log('Game was not started');
+        return;
+    } else game();
 }
 
 function game() {
@@ -37,34 +57,53 @@ function game() {
     let playerWins = 0;
     let computerWins = 0;
     for (let i = 0; i < 5; i++) {
-        const playerSelection = getPlayerInput();
+        const playerSelection = getPlayerInput('Rock, paper or scissors?');
+
+        if (!playerSelection) return; // continue, break, return
+
         const computerSelection = computerPlay();
         console.log(playRound(playerSelection, computerSelection));
         if (playRound(playerSelection, computerSelection) === "Draw!") {
             draws++;
+            alert('Tied game...')
             console.log(`Wins: ${playerWins}, Losses: ${computerWins}, Draws: ${draws}`);
         }
         if (playRound(playerSelection, computerSelection) === `You win! ${playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1)} beats ${computerSelection}!`) {
-            playerWins++;
+            playerWins++
+            alert(`You win! ${playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1)} beats ${computerSelection}!`);
             console.log(`Wins: ${playerWins}, Losses: ${computerWins}, Draws: ${draws}`);
         };
-        if (playRound(playerSelection, computerSelection) ===`You lose! ${computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1)} beats ${playerSelection}!`) {
+        if (playRound(playerSelection, computerSelection) === `You lose! ${computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1)} beats ${playerSelection}!`) {
             computerWins++;
+            alert(`You lose! ${computerSelection.charAt(0).toUpperCase() + computerSelection.slice(1)} beats ${playerSelection}!`);
             console.log(`Wins: ${playerWins}, Losses: ${computerWins}, Draws: ${draws}`);
         };
     }
     console.log('Game Over');
     if(playerWins > computerWins) {
+        alert('Nice! You won!');
         console.log('Nice! You won!');
     }
     if(computerWins > playerWins) {
+        alert('Loser');
         console.log('Loser');
     }
     if(playerWins === computerWins) {
-        console.log('Draw...');
+        alert('You drew overall');
+        console.log('You drew overall');
     }
     console.log(`Wins: ${playerWins}, Losses: ${computerWins}, Draws: ${draws}`);
     console.log('------------------')
+    startNewGame();
 }
 
-setTimeout(function startGame() { game(); }, 5000);
+function startNewGame() {
+    const newGame = confirm("Would you like to play again?");
+    if (!newGame) {
+        return;
+    } else {
+        game();
+    }
+}
+
+setTimeout(firstGame, 3000);
